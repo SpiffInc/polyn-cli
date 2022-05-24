@@ -6,19 +6,15 @@ Gem::Specification.new do |spec|
   spec.name          = "polyn-cli"
   spec.version       = Polyn::Cli::VERSION
   spec.authors       = ["Jarod"]
-  spec.email         = ["therealfugu@gmail.com"]
+  spec.email         = ["jarod.reid@spiff.com"]
 
-  spec.summary       = "TODO: Write a short summary, because RubyGems requires one."
-  spec.description   = "TODO: Write a longer description or delete this line."
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = "CLI for the Polyn service framework"
+  spec.description   = "CLI for the Polyn service framework"
+  spec.homepage      = "https://github.com/Spiffinc/polyn-cli"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
-
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "TODO: Put your gem's public repo URL here."
-  spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -31,6 +27,9 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
+  spec.add_dependency "nats-pure", "~> 2.0.0"
+
+  spec.add_development_dependency "rspec"
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
