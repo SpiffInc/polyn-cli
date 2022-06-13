@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require File.join(File.expand_path("../..", __FILE__), "lib/polyn/cli")
+
+Polyn::Cli.start(ARGV)
