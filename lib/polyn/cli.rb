@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require "thor"
+require "dotenv"
+
+Dotenv.load
 
 module Polyn
   class Cli < Thor
@@ -50,7 +53,7 @@ module Polyn
         run tf_apply
       end
       say "Updating Polyn event registry"
-      CloudEventLoader.new(polyn_env, self).load
+      CloudEventLoader.new(polyn_env, self).load_events
     end
 
     private
