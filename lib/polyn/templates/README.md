@@ -15,4 +15,4 @@ environment.
 
 ## Streams
 
-Each stream should have its own configuration file under `./tf`. Run `polyn gen stream <stream_name>` to generate a new configuration file for a stream
+Each stream should have its own configuration file under `./tf`. Run `polyn gen:stream <stream_name>` to generate a new configuration file for a stream

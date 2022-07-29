@@ -1,8 +1,6 @@
 # Polyn::Cli
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/polyn/cli`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Polyn CLI is a tool for managing and configuring a NATS server for organizations using the Polyn protocol
 
 ## Installation
 
@@ -22,7 +20,9 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Stream Generator
+
+Run `polyn gen:stream <stream_name>` to generate a new configuration file for a stream
 
 ## Development
 

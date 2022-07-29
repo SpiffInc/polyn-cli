@@ -2,7 +2,7 @@
 
 require "thor"
 require "dotenv"
-require_relative "./gen"
+require_relative "./stream_generator"
 
 Dotenv.load
 
@@ -14,9 +14,6 @@ module Polyn
     VERSION      = "0.1.0"
 
     source_root File.join(__dir__, "templates")
-
-    desc "gen", "Polyn generators"
-    subcommand "gen", Gen
 
     desc "init", "initializes a Polyn event repository"
     def init
@@ -73,6 +70,9 @@ module Polyn
         %(tf apply -var "jestream_servers=#{ENV['JETSTREAM_SERVERS']}")
       end
     end
+
+    register(Polyn::StreamGenerator, "gen:stream", "gen:stream NAME",
+      "Generates a new stream configuration with boilerplate")
   end
 end
 
