@@ -12,3 +12,7 @@ environment.
 4. [Install the Polyn CLI]()
 5. Call `polyn up`. By default this will run in `development` mode, which will start the NATS
    server, configure it via Terraform, and update the Polyn Event Registry.
+
+## Streams
+
+Each stream should have it's own configuration file under `./tf`
