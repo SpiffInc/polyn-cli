@@ -1,16 +1,16 @@
 // STREAM DEFINITION
 
-resource "jetstream_stream" "widgets" {
-  name = "app_widgets"
+resource "jetstream_stream" "WIDGETS" {
+  name = "WIDGETS"
   subjects = ["app.widgets.*.*"]
   storage = "file"
   max_age  = 60 * 60 * 24 * 365 // 1 year
 }
 
 
-  // CONSUMERS
+// CONSUMERS
 
-// app.widgets.created_notifier 
+// app.widgets.created_notifier
 
 resource "jetstream_consumer" "app_widgets_created_notifier_app_widgets" {
   stream_id = jetstream_stream.widgets.id
