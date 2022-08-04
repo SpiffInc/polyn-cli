@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 require "json"
+require "nats/client"
 
 module Polyn
   class Cli
+    ##
+    # Loads the JSON schmea into the event registry.
     class CloudEventLoader
       STORE_NAME = "POLYN_SCHEMAS"
 
@@ -48,29 +51,46 @@ module Polyn
         "required"   => %w[id type source specversion datacontenttype type data],
       }.freeze
 
+      ##
+      # Loads the events from the event repository into the Polyn event registry.
+      # @return [Bool]
+      def self.load(polyn_env, cli)
+        new(polyn_env, cli).load_events
+      end
+
       def initialize(env, thor)
-        @env  = env
-        @thor = thor
+        @env    = env
+        @thor   = thor
+        @client = NATS.connect(ENV["NATS_URI"]).js
+        @bucket = client.key_value(STORE_NAME)
 
         @events = {}
       end
 
-      def load
+      # @private
+      def load_events
         thor.say "Loading events into the Polyn event registry from '#{events_dir}'"
+        read_events
+
+        events.each do |name, event|
+          bucket.put(name, event)
+        end
+
+        true
+      end
+
+      private
+
+      def read_events
         Dir.glob(File.join(events_dir, "*.json")).each do |event_file|
           thor.say "Loading 'event #{event_file}'"
           event = wrap_cloud_event(JSON.parse(File.read(event_file)))
 
           events[event[File.basename(event_file, ".json")]] = event
         end
-
-        events.each do |name, event|
-        end
       end
 
-      private
-
-      attr_reader :env, :thor, :events
+      attr_reader :env, :thor, :events, :client, :bucket
 
       def events_dir
         File.join(Dir.pwd, "events")
