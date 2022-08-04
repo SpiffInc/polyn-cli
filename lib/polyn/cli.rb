@@ -2,6 +2,7 @@
 
 require "thor"
 require "dotenv"
+require_relative "./stream_generator"
 
 Dotenv.load
 
@@ -69,6 +70,9 @@ module Polyn
         %(tf apply -var "jestream_servers=#{ENV['JETSTREAM_SERVERS']}")
       end
     end
+
+    register(Polyn::StreamGenerator, "gen:stream", "gen:stream NAME",
+      "Generates a new stream configuration with boilerplate")
   end
 end
 
