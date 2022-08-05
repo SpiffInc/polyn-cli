@@ -2,6 +2,7 @@
 
 require "thor"
 require "dotenv"
+require "json_schemer"
 require "polyn/cli/configuration"
 require "polyn/cli/stream_generator"
 require "polyn/cli/cloud_event"
@@ -23,6 +24,7 @@ module Polyn
     end
 
     class Error < StandardError; end
+    class ValidationError < Error; end
 
     ##
     # Configuration information for Polyn
