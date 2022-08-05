@@ -28,7 +28,10 @@ Run `polyn gen:stream <stream_name>` to generate a new configuration file for a 
 
 Run `polyn up` to update your NATS server with the latest configuration in your `./tf` directory. It will also update your Schema Repository with the latest schemas.
 
-Include `JETSTREAM_SERVERS` as an `ENV` variable in production to specify the locations of your servers
+## Environment Variables
+
+* `NATS_SERVERS` - locations of your servers (defaults to localhost)
+* `POLYN_ENV` - type of environment (defaults to "development")
 
 ## Development
 

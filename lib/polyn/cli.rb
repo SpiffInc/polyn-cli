@@ -20,14 +20,16 @@ module Polyn
       Commands.start(args)
     end
 
+    class Error < StandardError; end
+
     ##
-    # Thor commands for the CLI. Subclasses so other classes can be in the CLI namespace
+    # Thor commands for the CLI. Subclassed so other classes can be in the CLI namespace
     class Commands < Thor
       include Thor::Actions
-      class Error < StandardError; end
 
       source_root File.join(__dir__, "templates")
 
+      # https://github.com/rails/thor/wiki/Making-An-Executable
       def self.exit_on_failure?
         true
       end
@@ -73,7 +75,7 @@ module Polyn
         if polyn_env == "development"
           'terraform apply -var "jetstream_servers=localhost:4222" -auto-approve'
         else
-          %(terraform apply -var "jetstream_servers=#{ENV['JETSTREAM_SERVERS']}")
+          %(terraform apply -var "jetstream_servers=#{ENV['NATS_SERVERS']}")
         end
       end
 

@@ -58,7 +58,7 @@ module Polyn
       def initialize(env, thor)
         @env    = env
         @thor   = thor
-        @client = NATS.connect(ENV["NATS_URI"]).js
+        @client = NATS.connect(ENV["NATS_SERVERS"]).js
         @bucket = client.key_value(STORE_NAME)
 
         @events = {}
