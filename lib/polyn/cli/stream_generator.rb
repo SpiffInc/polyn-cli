@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Polyn
+  ##
+  # Generates a new Stream configuration file for terraform
   class StreamGenerator < Thor::Group
     include Thor::Actions
 
