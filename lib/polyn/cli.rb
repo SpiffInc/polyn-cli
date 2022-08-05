@@ -49,6 +49,7 @@ module Polyn
         say "Initializing Polyn event repository"
         directory "tf", "tf"
         directory "events", "events"
+        template "docker-compose.yml", "docker-compose.yml"
         template "gitignore", ".gitignore"
         template "README.md", "README.md"
         run tf_init
