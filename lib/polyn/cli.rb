@@ -2,7 +2,7 @@
 
 require "thor"
 require "dotenv"
-require "polyn/stream_generator"
+require "polyn/cli/stream_generator"
 require "json"
 require "nats/client"
 
@@ -16,6 +16,10 @@ module Polyn
     VERSION      = "0.1.0"
 
     source_root File.join(__dir__, "templates")
+
+    def self.exit_on_failure?
+      true
+    end
 
     desc "init", "initializes a Polyn event repository"
     def init
