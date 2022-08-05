@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "dotenv",    "~> 2.7.6"
-  spec.add_dependency "json_schemer"
+  spec.add_dependency "json_schemer", "~> 0.2"
   spec.add_dependency "nats-pure", "~> 2.0.0"
   spec.add_dependency "thor",      "~> 1.2.0"
 end
