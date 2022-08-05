@@ -28,17 +28,17 @@ module Polyn
       directory "events", "events"
       template "gitignore", ".gitignore"
       template "README.md", "README.md"
-      setup
+      run tf_init
       say "Initializing git"
       run "git init"
       say "Repository initialized"
     end
 
-    desc "setup", "Initializes Terraform for configuration"
-    def setup
+    desc "tf_init", "Initializes Terraform for configuration"
+    def tf_init
       say "Initializing Terraform"
       inside "tf" do
-        run "tf init"
+        run "terraform init"
       end
     end
 
