@@ -2,7 +2,9 @@
 
 require "thor"
 require "dotenv"
-require_relative "./stream_generator"
+require "polyn/stream_generator"
+require "json"
+require "nats/client"
 
 Dotenv.load
 
