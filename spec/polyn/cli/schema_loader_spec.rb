@@ -55,6 +55,17 @@ RSpec.describe Polyn::Cli::SchemaLoader do
       expect { subject.load_events }.to raise_error(Polyn::Cli::ValidationError)
     end
 
+    it "invalid file name raises" do
+      add_schema_file("app widgets v1", {
+        "type"       => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+        },
+      })
+
+      expect { subject.load_events }.to raise_error(Polyn::Cli::ValidationError)
+    end
+
     it "non-json documents are ignored" do
       path = File.join(tmp_dir, "foo.png")
       File.write(path, "foo")

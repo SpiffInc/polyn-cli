@@ -46,6 +46,7 @@ module Polyn
           data_schema = JSON.parse(File.read(event_file))
           event_type  = File.basename(event_file, ".json")
           validate_schema!(event_type, data_schema)
+          validate_event_type!(event_type)
           schema      = compose_cloud_event(data_schema)
 
           events[event_type] = schema
@@ -58,6 +59,17 @@ module Polyn
         raise Polyn::Cli::ValidationError,
           "Invalid JSON Schema document for event #{event_type}\n#{e.message}\n"\
           "#{JSON.pretty_generate(schema)}"
+      end
+
+      ##
+      # Validate the event type
+      def validate_event_type!(name)
+        if name.is_a?(String) && name.match?(/\A[a-z0-9]+(?:\.[a-z0-9]+)*\z/)
+          name
+        else
+          raise Polyn::Cli::ValidationError,
+            "Event types must be lowercase, alphanumeric and dot separated, got #{name.inspect}"
+        end
       end
 
       def compose_cloud_event(event_schema)
