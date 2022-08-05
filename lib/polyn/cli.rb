@@ -2,6 +2,7 @@
 
 require "thor"
 require "dotenv"
+require "polyn/cli/configuration"
 require "polyn/cli/stream_generator"
 require "polyn/cli/cloud_event_loader"
 require "polyn/cli/version"
@@ -21,6 +22,12 @@ module Polyn
     end
 
     class Error < StandardError; end
+
+    ##
+    # Configuration information for Polyn
+    def self.configuration
+      @configuration ||= Polyn::Cli::Configuration.new
+    end
 
     ##
     # Thor commands for the CLI. Subclassed so other classes can be in the CLI namespace
@@ -62,24 +69,28 @@ module Polyn
           run tf_apply
         end
         say "Updating Polyn event registry"
-        CloudEventLoader.new(polyn_env, self).load_events
+        Polyn::Cli::CloudEventLoader.new(self).load_events
       end
 
       private
 
       def polyn_env
-        ENV["POLYN_ENV"] || "development"
+        Polyn::Cli.configuration.polyn_env
+      end
+
+      def nats_servers
+        Polyn::Cli.configuration.nats_servers
       end
 
       def tf_apply
         if polyn_env == "development"
-          'terraform apply -var "jetstream_servers=localhost:4222" -auto-approve'
+          %(terraform apply -var "jetstream_servers=#{nats_servers}" -auto-approve)
         else
-          %(terraform apply -var "jetstream_servers=#{ENV['NATS_SERVERS']}")
+          %(terraform apply -var "jetstream_servers=#{nats_servers}")
         end
       end
 
-      register(Polyn::StreamGenerator, "gen:stream", "gen:stream NAME",
+      register(Polyn::Cli::StreamGenerator, "gen:stream", "gen:stream NAME",
         "Generates a new stream configuration with boilerplate")
     end
   end

@@ -51,14 +51,13 @@ module Polyn
       ##
       # Loads the events from the event repository into the Polyn event registry.
       # @return [Bool]
-      def self.load(polyn_env, cli)
-        new(polyn_env, cli).load_events
+      def self.load(cli)
+        new(cli).load_events
       end
 
-      def initialize(env, thor)
-        @env    = env
+      def initialize(thor)
         @thor   = thor
-        @client = NATS.connect(ENV["NATS_SERVERS"]).js
+        @client = NATS.connect(Polyn::Cli.configuration.nats_servers).jetstream
         @bucket = client.key_value(STORE_NAME)
 
         @events = {}
@@ -87,7 +86,7 @@ module Polyn
         end
       end
 
-      attr_reader :env, :thor, :events, :client, :bucket
+      attr_reader :thor, :events, :client, :bucket
 
       def events_dir
         File.join(Dir.pwd, "events")
