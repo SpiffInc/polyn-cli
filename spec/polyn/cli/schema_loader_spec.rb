@@ -49,6 +49,12 @@ RSpec.describe Polyn::Cli::SchemaLoader do
       })
     end
 
+    it "invalid json schema document raises" do
+      add_schema_file("app.widgets.v1", "foo")
+
+      expect { subject.load_events }.to raise_error(Polyn::Cli::ValidationError)
+    end
+
     def add_schema_file(name, content)
       path = File.join(tmp_dir, "#{name}.json")
       File.write(path, JSON.generate(content))

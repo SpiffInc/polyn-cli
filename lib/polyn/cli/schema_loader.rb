@@ -43,10 +43,21 @@ module Polyn
       def read_events
         Dir.glob(File.join(events_dir, "*.json")).each do |event_file|
           thor.say "Loading 'event #{event_file}'"
-          event = compose_cloud_event(JSON.parse(File.read(event_file)))
+          data_schema = JSON.parse(File.read(event_file))
+          event_type  = File.basename(event_file, ".json")
+          validate_schema!(event_type, data_schema)
+          schema      = compose_cloud_event(data_schema)
 
-          events[File.basename(event_file, ".json")] = event
+          events[event_type] = schema
         end
+      end
+
+      def validate_schema!(event_type, schema)
+        JSONSchemer.schema(schema)
+      rescue StandardError => e
+        raise Polyn::Cli::ValidationError,
+          "Invalid JSON Schema document for event #{event_type}\n#{e.message}\n"\
+          "#{JSON.pretty_generate(schema)}"
       end
 
       def compose_cloud_event(event_schema)
