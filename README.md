@@ -24,6 +24,12 @@ Or install it yourself as:
 
 Run `polyn gen:stream <stream_name>` to generate a new configuration file for a stream
 
+### Updating NATS Configuration and Schemas
+
+Run `polyn up` to update your NATS server with the latest configuration in your `./tf` directory. It will also update your Schema Repository with the latest schemas.
+
+Include `JETSTREAM_SERVERS` as an `ENV` variable in production to specify the locations of your servers
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
