@@ -65,9 +65,9 @@ module Polyn
 
     def tf_apply
       if polyn_env == "development"
-        'tf apply -var "jetstream_servers=localhost:4222" -auto-approve'
+        'terraform apply -var "jetstream_servers=localhost:4222" -auto-approve'
       else
-        %(tf apply -var "jestream_servers=#{ENV['JETSTREAM_SERVERS']}")
+        %(terraform apply -var "jetstream_servers=#{ENV['JETSTREAM_SERVERS']}")
       end
     end
 
