@@ -4,7 +4,7 @@ module Polyn
   class Cli
     ##
     # Loads the JSON schmea into the event registry.
-    class CloudEventLoader
+    class SchemaLoader
       include Thor::Actions
 
       STORE_NAME = "POLYN_SCHEMAS"

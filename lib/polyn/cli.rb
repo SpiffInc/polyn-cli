@@ -5,7 +5,7 @@ require "dotenv"
 require "polyn/cli/configuration"
 require "polyn/cli/stream_generator"
 require "polyn/cli/cloud_event"
-require "polyn/cli/cloud_event_loader"
+require "polyn/cli/schema_loader"
 require "polyn/cli/version"
 require "json"
 require "nats/client"
@@ -70,7 +70,7 @@ module Polyn
           run tf_apply
         end
         say "Updating Polyn event registry"
-        Polyn::Cli::CloudEventLoader.new(self).load_events
+        Polyn::Cli::SchemaLoader.new(self).load_events
       end
 
       private
