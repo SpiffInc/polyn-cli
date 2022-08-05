@@ -55,6 +55,12 @@ RSpec.describe Polyn::Cli::SchemaLoader do
       expect { subject.load_events }.to raise_error(Polyn::Cli::ValidationError)
     end
 
+    it "non-json documents are ignored" do
+      path = File.join(tmp_dir, "foo.png")
+      File.write(path, "foo")
+      expect { subject.load_events }.to_not raise_error
+    end
+
     def add_schema_file(name, content)
       path = File.join(tmp_dir, "#{name}.json")
       File.write(path, JSON.generate(content))
