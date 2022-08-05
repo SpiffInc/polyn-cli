@@ -24,33 +24,22 @@ module Polyn
     desc "init", "initializes a Polyn event repository"
     def init
       say "Initializing Polyn event repository"
-      template "Gemfile", "Gemfile"
       directory "tf", "tf"
       directory "events", "events"
-      template "docker-compose.yml", "docker-compose.yml"
       template "gitignore", ".gitignore"
       template "README.md", "README.md"
-      say "Iniitalizing Terraform"
-      inside "tf" do
-        run "tf init"
-      end
-      say "Running bundler"
-      run "bundle install"
+      setup
       say "Initializing git"
       run "git init"
       say "Repository initialized"
     end
 
-    desc "setup", "sets up a Polyn event repository on a developer machine"
+    desc "setup", "Initializes Terraform for configuration"
     def setup
-      say "Setting up the events repository"
-      say "Running bundler"
-      run "bundle install"
-      run "Initializing Terraform"
+      say "Initializing Terraform"
       inside "tf" do
         run "tf init"
       end
-      say("Repository set up")
     end
 
     desc "up", "updates the JetStream streams and consumers, as well the Polyn event registry"

@@ -1,7 +1,0 @@
-# frozen_string_literal: true
-
-source "https://rubygems.org"
-
-gem "dotenv", "~> 2.7.6"
-gem "nats-pure", "~> 2.0.0"
-# gem "polyn-cli", "~> <%= Polyn::Cli::VERSION %>"
