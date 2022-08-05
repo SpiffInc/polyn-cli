@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "polyn/cli"
+require "tmpdir"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -12,4 +13,15 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+end
+
+RSpec.shared_context :tmp_dir do
+  around do |example|
+    Dir.mktmpdir("rspec-") do |dir|
+      @tmp_dir = dir
+      example.run
+    end
+  end
+
+  attr_reader :tmp_dir
 end
