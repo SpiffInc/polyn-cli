@@ -5,7 +5,7 @@ environment.
 
 ## Development Setup
 
-1. Install [Ruby]()
+1. Install [Ruby](https://github.com/asdf-vm/asdf-ruby)
 2. Install Terraform. For M1 Macs, [download the AMD64 version](https://www.terraform.io/downloads)
    rather than using Homebrew to install Terraform.
 3. Ensure Docker & Docker Compose is installed
