@@ -3,6 +3,12 @@
 module Polyn
   class Cli
     class Naming
+      ##
+      # Convert a dot separated name into a colon separated name
+      def self.dot_to_colon(str)
+        str.gsub(".", ":")
+      end
+
       def self.validate_stream_name!(name)
         unless name.match(/^[a-zA-Z0-9_]+$/)
           raise Polyn::Cli::Error,

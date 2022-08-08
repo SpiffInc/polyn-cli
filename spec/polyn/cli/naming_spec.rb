@@ -162,4 +162,10 @@ RSpec.describe Polyn::Cli::Naming do
       expect(described_class.colon_to_underscore("foo:bar:baz")).to eq("foo_bar_baz")
     end
   end
+
+  describe "#dot_to_colon" do
+    it "replaces dots" do
+      expect(described_class.dot_to_colon("com.acme.user.created.v1.schema.v1")).to eq("com:acme:user:created:v1:schema:v1")
+    end
+  end
 end
