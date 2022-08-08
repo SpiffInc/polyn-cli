@@ -2,9 +2,6 @@
 
 require "spec_helper"
 
-class FakeThor < Thor
-end
-
 RSpec.describe Polyn::Cli::SchemaLoader do
   describe "#load_events" do
     include_context :tmp_dir
