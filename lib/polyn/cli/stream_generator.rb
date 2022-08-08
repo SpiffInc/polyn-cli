@@ -10,8 +10,9 @@ module Polyn
       desc "Generates a new stream configuration with boilerplate"
 
       argument :name, required: true
+      class_option :dir, default: Dir.getwd
 
-      source_root File.join(__dir__, "templates")
+      source_root File.join(File.expand_path(__dir__), "../templates")
 
       def check_name
         unless name.match(/^[a-zA_Z0-9_]+$/)
@@ -30,7 +31,7 @@ module Polyn
 
       def create
         say "Creating new stream #{stream_name}"
-        template "generators/stream.tf", "events/#{file_name}.tf"
+        template "generators/stream.tf", File.join(options.dir, "events/#{file_name}.tf")
       end
     end
   end

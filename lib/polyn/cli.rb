@@ -37,7 +37,7 @@ module Polyn
     class Commands < Thor
       include Thor::Actions
 
-      source_root File.join(__dir__, "templates")
+      source_root File.join(File.expand_path(__dir__), "templates")
 
       # https://github.com/rails/thor/wiki/Making-An-Executable
       def self.exit_on_failure?
