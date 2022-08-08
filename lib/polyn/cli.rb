@@ -102,7 +102,7 @@ module Polyn
       register(Polyn::Cli::StreamGenerator, "gen:stream", "gen:stream NAME",
         "Generates a new stream configuration with boilerplate")
       register(Polyn::Cli::ConsumerGenerator, "gen:consumer",
-        "gen:consumer STREAM_NAME SOURCE_NAME EVENT_TYPE",
+        "gen:consumer STREAM_NAME DESTINATION_NAME EVENT_TYPE",
         "Generates a new NATS Consumer configuration with boilerplate")
     end
   end

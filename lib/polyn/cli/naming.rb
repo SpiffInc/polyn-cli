@@ -14,10 +14,10 @@ module Polyn
         name.upcase
       end
 
-      def self.validate_source_name!(name)
+      def self.validate_destination_name!(name)
         unless name.is_a?(String) && name.match?(/\A[a-z0-9]+(?:(?:\.|:)[a-z0-9]+)*\z/)
           raise Polyn::Cli::Error,
-            "Event source must be lowercase, alphanumeric and dot/colon separated, got #{name}"
+            "Event destination must be lowercase, alphanumeric and dot/colon separated, got #{name}"
         end
       end
 

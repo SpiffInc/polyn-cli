@@ -19,7 +19,7 @@ Each stream should have its own configuration file under `./tf` . Run `polyn gen
 
 ## Consumers
 
-Run `polyn gen:consumer <stream_name> <source_name> <event_type>` to generate new configuration for a consumer of a stream. It will be included in the same file as the stream configuration.
+Run `polyn gen:consumer <stream_name> <destination_name> <event_type>` to generate new configuration for a consumer of a stream. It will be included in the same file as the stream configuration.
 
 ## Event Schemas
 

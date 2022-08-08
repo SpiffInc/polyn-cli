@@ -20,7 +20,7 @@ Run `polyn gen:stream <stream_name>` to generate a new configuration file for a 
 
 ### Consumer Generator
 
-Run `polyn gen:consumer <stream_name> <source_name> <event_type>` to generate new configuration for a consumer of a stream. It will be included in the same file as the stream configuration.
+Run `polyn gen:consumer <stream_name> <destination_name> <event_type>` to generate new configuration for a consumer of a stream. It will be included in the same file as the stream configuration.
 
 ### Updating NATS Configuration and Schemas
 

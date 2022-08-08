@@ -9,16 +9,17 @@ module Polyn
 
       desc "Generates a new NATS Consumer configuration for a stream"
 
-      argument :stream_name, required: true
-      argument :source_name, required: true
-      argument :event_type, required: true
+      argument :stream_name, required: true, desc: "The name of the stream to consume events from"
+      argument :destination_name, required: true,
+        desc: "The name of the application, service, or component consuming the event"
+      argument :event_type, required: true, desc: "The type of event being consumed"
       class_option :dir, default: Dir.getwd
 
       source_root File.join(File.expand_path(__dir__), "../templates")
 
       def check_names
         Polyn::Cli::Naming.validate_stream_name!(stream_name)
-        Polyn::Cli::Naming.validate_source_name!(source_name)
+        Polyn::Cli::Naming.validate_destination_name!(destination_name)
         Polyn::Cli::Naming.validate_event_type!(event_type)
       end
 
@@ -27,10 +28,10 @@ module Polyn
       end
 
       def consumer_name
-        source = Polyn::Cli::Naming.colon_to_underscore(source_name)
-        source = Polyn::Cli::Naming.dot_to_underscore(source)
-        type   = Polyn::Cli::Naming.dot_to_underscore(event_type)
-        "#{source}_#{type}"
+        dest = Polyn::Cli::Naming.colon_to_underscore(destination_name)
+        dest = Polyn::Cli::Naming.dot_to_underscore(dest)
+        type = Polyn::Cli::Naming.dot_to_underscore(event_type)
+        "#{dest}_#{type}"
       end
 
       def file_name
