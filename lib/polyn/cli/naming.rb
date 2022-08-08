@@ -20,6 +20,13 @@ module Polyn
             "Event source must be lowercase, alphanumeric and dot/colon separated, got #{name}"
         end
       end
+
+      def self.validate_event_type!(name)
+        unless name.is_a?(String) && name.match?(/\A[a-z0-9]+(?:\.[a-z0-9]+)*\z/)
+          raise Polyn::Cli::Error,
+            "Event types must be lowercase, alphanumeric and dot separated"
+        end
+      end
     end
   end
 end
