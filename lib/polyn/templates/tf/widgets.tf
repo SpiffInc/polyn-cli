@@ -2,11 +2,10 @@
 
 resource "jetstream_stream" "WIDGETS" {
   name = "WIDGETS"
-  subjects = ["app.widgets.*.*"]
+  subjects = ["widgets.>"]
   storage = "file"
   max_age  = 60 * 60 * 24 * 365 // 1 year
 }
-
 
 // CONSUMERS
 
