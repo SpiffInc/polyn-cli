@@ -13,6 +13,13 @@ module Polyn
       def self.format_stream_name(name)
         name.upcase
       end
+
+      def self.validate_source_name!(name)
+        unless name.is_a?(String) && name.match?(/\A[a-z0-9]+(?:(?:\.|:)[a-z0-9]+)*\z/)
+          raise Polyn::Cli::Error,
+            "Event source must be lowercase, alphanumeric and dot/colon separated, got #{name}"
+        end
+      end
     end
   end
 end
