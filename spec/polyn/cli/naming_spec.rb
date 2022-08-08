@@ -150,4 +150,16 @@ RSpec.describe Polyn::Cli::Naming do
         .to raise_error(Polyn::Cli::Error)
     end
   end
+
+  describe "#dot_to_underscore" do
+    it "turns dot to underscore" do
+      expect(described_class.dot_to_underscore("foo.bar.baz")).to eq("foo_bar_baz")
+    end
+  end
+
+  describe "#colon_to_underscore" do
+    it "turns colon to underscore" do
+      expect(described_class.colon_to_underscore("foo:bar:baz")).to eq("foo_bar_baz")
+    end
+  end
 end

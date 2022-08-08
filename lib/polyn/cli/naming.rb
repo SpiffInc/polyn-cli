@@ -27,6 +27,14 @@ module Polyn
             "Event types must be lowercase, alphanumeric and dot separated"
         end
       end
+
+      def self.dot_to_underscore(name)
+        name.gsub(".", "_")
+      end
+
+      def self.colon_to_underscore(name)
+        name.gsub(":", "_")
+      end
     end
   end
 end
