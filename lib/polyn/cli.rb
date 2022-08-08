@@ -2,78 +2,103 @@
 
 require "thor"
 require "dotenv"
-require_relative "./stream_generator"
+require "json_schemer"
+require "polyn/cli/configuration"
+require "polyn/cli/stream_generator"
+require "polyn/cli/cloud_event"
+require "polyn/cli/schema_loader"
+require "polyn/cli/version"
+require "json"
+require "nats/client"
 
 Dotenv.load
 
 module Polyn
-  class Cli < Thor
-    include Thor::Actions
+  ##
+  # CLI for Polyn for configuring NATS server
+  class Cli
+    ##
+    # Proxy to Thor start
+    def self.start(args)
+      Commands.start(args)
+    end
+
     class Error < StandardError; end
+    class ValidationError < Error; end
 
-    VERSION      = "0.1.0"
+    ##
+    # Configuration information for Polyn
+    def self.configuration
+      @configuration ||= Polyn::Cli::Configuration.new
+    end
 
-    source_root File.join(__dir__, "templates")
+    ##
+    # Thor commands for the CLI. Subclassed so other classes can be in the CLI namespace
+    class Commands < Thor
+      include Thor::Actions
 
-    desc "init", "initializes a Polyn event repository"
-    def init
-      say "Initializing Polyn event repository"
-      template "Gemfile", "Gemfile"
-      directory "tf", "tf"
-      directory "events", "events"
-      template "docker-compose.yml", "docker-compose.yml"
-      template "gitignore", ".gitignore"
-      template "README.md", "README.md"
-      say "Iniitalizing Terraform"
-      inside "tf" do
-        run "tf init"
+      source_root File.join(File.expand_path(__dir__), "templates")
+
+      # https://github.com/rails/thor/wiki/Making-An-Executable
+      def self.exit_on_failure?
+        true
       end
-      say "Running bundler"
-      run "bundle install"
-      say "Initializing git"
-      run "git init"
-      say "Repository initialized"
-    end
 
-    desc "setup", "sets up a Polyn event repository on a developer machine"
-    def setup
-      say "Setting up the events repository"
-      say "Running bundler"
-      run "bundle install"
-      run "Initializing Terraform"
-      inside "tf" do
-        run "tf init"
+      method_option :dir, default: Dir.getwd
+      desc "init", "initializes a Polyn event repository"
+      def init
+        say "Initializing Polyn event repository"
+        directory "tf", File.join(options.dir, "tf")
+        directory "events", File.join(options.dir, "events")
+        template "docker-compose.yml", File.join(options.dir, "docker-compose.yml")
+        template "gitignore", File.join(options.dir, ".gitignore")
+        template "README.md", File.join(options.dir, "README.md")
+        run tf_init
+        say "Initializing git"
+        inside options.dir do
+          run "git init"
+        end
+        say "Repository initialized"
       end
-      say("Repository set up")
-    end
 
-    desc "up", "updates the JetStream streams and consumers, as well the Polyn event registry"
-    def up
-      say "Updating JetStream configuration"
-      inside "tf" do
-        run tf_apply
+      desc "tf_init", "Initializes Terraform for configuration"
+      def tf_init
+        say "Initializing Terraform"
+        inside File.join(options.dir, "tf") do
+          run "terraform init"
+        end
       end
-      say "Updating Polyn event registry"
-      CloudEventLoader.new(polyn_env, self).load_events
-    end
 
-    private
-
-    def polyn_env
-      ENV["POLYN_ENV"] || "development"
-    end
-
-    def tf_apply
-      if polyn_env == "development"
-        'tf apply -var "jetstream_servers=localhost:4222" -auto-approve'
-      else
-        %(tf apply -var "jestream_servers=#{ENV['JETSTREAM_SERVERS']}")
+      desc "up", "updates the JetStream streams and consumers, as well the Polyn event registry"
+      def up
+        say "Updating JetStream configuration"
+        inside "tf" do
+          run tf_apply
+        end
+        say "Updating Polyn event registry"
+        Polyn::Cli::SchemaLoader.new(self).load_events
       end
-    end
 
-    register(Polyn::StreamGenerator, "gen:stream", "gen:stream NAME",
-      "Generates a new stream configuration with boilerplate")
+      private
+
+      def polyn_env
+        Polyn::Cli.configuration.polyn_env
+      end
+
+      def nats_servers
+        Polyn::Cli.configuration.nats_servers
+      end
+
+      def tf_apply
+        if polyn_env == "development"
+          %(terraform apply -var "jetstream_servers=#{nats_servers}" -auto-approve)
+        else
+          %(terraform apply -var "jetstream_servers=#{nats_servers}")
+        end
+      end
+
+      register(Polyn::Cli::StreamGenerator, "gen:stream", "gen:stream NAME",
+        "Generates a new stream configuration with boilerplate")
+    end
   end
 end
-
-require_relative "cli/cloud_event_loader"

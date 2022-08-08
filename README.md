@@ -4,25 +4,28 @@ Polyn CLI is a tool for managing and configuring a NATS server for organizations
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'polyn-cli'
+```bash
+gem install 'polyn-cli'
 ```
 
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
-
-    $ gem install polyn-cli
-
 ## Usage
+
+### Create New Events Codebase
+
+Run `polyn init` inside a directory to create a new `events` respository for managing your event schemas and NATS server configuration
 
 ### Stream Generator
 
 Run `polyn gen:stream <stream_name>` to generate a new configuration file for a stream
+
+### Updating NATS Configuration and Schemas
+
+Run `polyn up` to update your NATS server with the latest configuration in your `./tf` directory. It will also update your Schema Repository with the latest schemas.
+
+## Environment Variables
+
+* `NATS_SERVERS` - locations of your servers (defaults to localhost)
+* `POLYN_ENV` - type of environment (defaults to "development")
 
 ## Development
 
