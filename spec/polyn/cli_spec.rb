@@ -29,6 +29,17 @@ RSpec.describe Polyn::Cli do
     include_context :tmp_dir
     it "it creates a new stream file" do
       subject.invoke("gen:stream", ["foo"], { dir: tmp_dir })
+      path = File.join(tmp_dir, "tf/foo.tf")
+      expect(File.exist?(path)).to be true
+      expect(File.read(path)).to include(%(resource "jetstream_stream" "FOO"))
+    end
+
+    it "raises if stream name is invalid" do
+      expect do
+        subject.invoke("gen:stream", ["foo bar baz"], { dir: tmp_dir })
+      end.to raise_error(Polyn::Cli::Error)
+    end
+  end
       path = File.join(tmp_dir, "events/foo.tf")
       expect(File.exist?(path)).to be true
       expect(File.read(path)).to include(%(resource "jetstream_stream" "FOO"))
