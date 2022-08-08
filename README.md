@@ -18,6 +18,10 @@ Run `polyn init` inside a directory to create a new `events` respository for man
 
 Run `polyn gen:stream <stream_name>` to generate a new configuration file for a stream
 
+### Schema Generator
+
+Run `polyn gen:schema <event_type>` to generate a new JSON Schema for an event
+
 ### Consumer Generator
 
 Run `polyn gen:consumer <stream_name> <destination_name> <event_type>` to generate new configuration for a consumer of a stream. It will be included in the same file as the stream configuration.

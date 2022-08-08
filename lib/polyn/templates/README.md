@@ -23,6 +23,8 @@ Run `polyn gen:consumer <stream_name> <destination_name> <event_type>` to genera
 
 ## Event Schemas
 
+Run `polyn gen:schema <event_type>` to generate a new JSON Schema for an event
+
 All the schemas for your events should live in the `./events` directory.
 The name of your schema file should be the same as your event, but with `.json` at the end.
 So if you have an event called `widgets.created.v1` you would create a schema file called `widgets.created.v1.json` in the `./events` directory.
