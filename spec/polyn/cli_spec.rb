@@ -33,5 +33,11 @@ RSpec.describe Polyn::Cli do
       expect(File.exist?(path)).to be true
       expect(File.read(path)).to include(%(resource "jetstream_stream" "FOO"))
     end
+
+    it "raises if stream name is invalid" do
+      expect do
+        subject.invoke("gen:stream", ["foo bar baz"], { dir: tmp_dir })
+      end.to raise_error(Polyn::Cli::Error)
+    end
   end
 end
