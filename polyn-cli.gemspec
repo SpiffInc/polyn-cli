@@ -5,8 +5,8 @@ require_relative "lib/polyn/cli/version"
 Gem::Specification.new do |spec|
   spec.name          = "polyn-cli"
   spec.version       = Polyn::Cli::VERSION
-  spec.authors       = ["Jarod"]
-  spec.email         = ["jarod.reid@spiff.com"]
+  spec.authors       = ["Jarod", "Brandyn Bennett"]
+  spec.email         = ["jarod.reid@spiff.com", "brandyn.bennett@spiff.com"]
 
   spec.summary               = "CLI for the Polyn service framework"
   spec.description           = "CLI for the Polyn service framework"
