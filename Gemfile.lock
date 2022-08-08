@@ -3,6 +3,7 @@ PATH
   specs:
     polyn-cli (0.1.0)
       dotenv (~> 2.7.6)
+      json_schemer (~> 0.2)
       nats-pure (~> 2.0.0)
       thor (~> 1.2.0)
 
