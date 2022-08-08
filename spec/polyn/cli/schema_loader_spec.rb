@@ -60,7 +60,7 @@ RSpec.describe Polyn::Cli::SchemaLoader do
         },
       })
 
-      expect { subject.load_events }.to raise_error(Polyn::Cli::ValidationError)
+      expect { subject.load_events }.to raise_error(Polyn::Cli::Error)
     end
 
     it "non-json documents are ignored" do
