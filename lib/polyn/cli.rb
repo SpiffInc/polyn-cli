@@ -44,24 +44,27 @@ module Polyn
         true
       end
 
+      method_option :dir, default: Dir.getwd
       desc "init", "initializes a Polyn event repository"
       def init
         say "Initializing Polyn event repository"
-        directory "tf", "tf"
-        directory "events", "events"
-        template "docker-compose.yml", "docker-compose.yml"
-        template "gitignore", ".gitignore"
-        template "README.md", "README.md"
+        directory "tf", File.join(options.dir, "tf")
+        directory "events", File.join(options.dir, "events")
+        template "docker-compose.yml", File.join(options.dir, "docker-compose.yml")
+        template "gitignore", File.join(options.dir, ".gitignore")
+        template "README.md", File.join(options.dir, "README.md")
         run tf_init
         say "Initializing git"
-        run "git init"
+        inside options.dir do
+          run "git init"
+        end
         say "Repository initialized"
       end
 
       desc "tf_init", "Initializes Terraform for configuration"
       def tf_init
         say "Initializing Terraform"
-        inside "tf" do
+        inside File.join(options.dir, "tf") do
           run "terraform init"
         end
       end
