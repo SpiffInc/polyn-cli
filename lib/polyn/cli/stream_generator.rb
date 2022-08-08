@@ -15,10 +15,7 @@ module Polyn
       source_root File.join(File.expand_path(__dir__), "../templates")
 
       def check_name
-        unless name.match(/^[a-zA_Z0-9_]+$/)
-          raise Polyn::Cli::Error,
-            "Stream name must be all alphanumeric, uppercase, and underscore separated. Got #{name}"
-        end
+        Polyn::Cli::Naming.validate_stream_name!(name)
       end
 
       def file_name
@@ -26,7 +23,7 @@ module Polyn
       end
 
       def stream_name
-        @stream_name ||= name.upcase
+        @stream_name ||= Polyn::Cli::Naming.format_stream_name(name)
       end
 
       def create
