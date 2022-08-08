@@ -27,7 +27,7 @@ module Polyn
       end
 
       def create
-        say "Creating new stream #{stream_name}"
+        say "Creating new stream config #{stream_name}"
         template "generators/stream.tf", File.join(options.dir, "tf/#{file_name}.tf")
       end
     end

@@ -4,6 +4,7 @@ require "thor"
 require "dotenv"
 require "json_schemer"
 require "polyn/cli/configuration"
+require "polyn/cli/consumer_generator"
 require "polyn/cli/naming"
 require "polyn/cli/stream_generator"
 require "polyn/cli/cloud_event"
@@ -100,6 +101,9 @@ module Polyn
 
       register(Polyn::Cli::StreamGenerator, "gen:stream", "gen:stream NAME",
         "Generates a new stream configuration with boilerplate")
+      register(Polyn::Cli::ConsumerGenerator, "gen:consumer",
+        "gen:consumer STREAM_NAME SOURCE_NAME EVENT_TYPE",
+        "Generates a new NATS Consumer configuration with boilerplate")
     end
   end
 end

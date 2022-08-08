@@ -32,6 +32,7 @@ RSpec.describe Polyn::Cli do
       path = File.join(tmp_dir, "tf/foo.tf")
       expect(File.exist?(path)).to be true
       expect(File.read(path)).to include(%(resource "jetstream_stream" "FOO"))
+      expect(file).to include(%(\n// CONSUMERS\n))
     end
 
     it "raises if stream name is invalid" do
@@ -40,6 +41,29 @@ RSpec.describe Polyn::Cli do
       end.to raise_error(Polyn::Cli::Error)
     end
   end
+
+  describe "#gen:consumer" do
+    include_context :tmp_dir
+    it "it adds consumer config to existing stream file" do
+      subject.invoke("gen:stream", ["foo_stream"], { dir: tmp_dir })
+      subject.invoke("gen:consumer", ["foo_stream", "users.backend", "user.updated.v1"],
+        { dir: tmp_dir })
+      file = File.read(File.join(tmp_dir, "tf/foo_stream.tf"))
+      expect(file).to include(%(resource "jetstream_consumer" "users_backend_user_updated_v1"))
+      expect(file).to include(%(stream_id = jetstream_stream.FOO_STREAM.id))
+      expect(file).to include(%(durable_name = "users_backend_user_updated_v1"))
+      expect(file).to include(%(filter_subject = "user.updated.v1"))
+    end
+
+    it "it raises if stream file is non-existant" do
+      subject.invoke("gen:stream", ["foo"], { dir: tmp_dir })
+      path = File.join(tmp_dir, "events/foo.tf")
+      expect(File.exist?(path)).to be true
+      expect(File.read(path)).to include(%(resource "jetstream_stream" "FOO"))
+    end
+
+    it "it raises if the event has no schema" do
+      subject.invoke("gen:stream", ["foo"], { dir: tmp_dir })
       path = File.join(tmp_dir, "events/foo.tf")
       expect(File.exist?(path)).to be true
       expect(File.read(path)).to include(%(resource "jetstream_stream" "FOO"))
