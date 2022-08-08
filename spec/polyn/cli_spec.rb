@@ -31,8 +31,9 @@ RSpec.describe Polyn::Cli do
       subject.invoke("gen:stream", ["foo"], { dir: tmp_dir })
       path = File.join(tmp_dir, "tf/foo.tf")
       expect(File.exist?(path)).to be true
-      expect(File.read(path)).to include(%(resource "jetstream_stream" "FOO"))
-      expect(file).to include(%(\n// CONSUMERS\n))
+      file = File.read(path)
+      expect(file).to include(%(resource "jetstream_stream" "FOO"))
+      expect(file).to include(%(\n// CONSUMERS))
     end
 
     it "raises if stream name is invalid" do
@@ -44,7 +45,13 @@ RSpec.describe Polyn::Cli do
 
   describe "#gen:consumer" do
     include_context :tmp_dir
+
+    before(:each) do
+      Dir.mkdir(File.join(tmp_dir, "events"))
+    end
+
     it "it adds consumer config to existing stream file" do
+      add_schema
       subject.invoke("gen:stream", ["foo_stream"], { dir: tmp_dir })
       subject.invoke("gen:consumer", ["foo_stream", "users.backend", "user.updated.v1"],
         { dir: tmp_dir })
@@ -56,23 +63,52 @@ RSpec.describe Polyn::Cli do
     end
 
     it "it raises if stream file is non-existant" do
-      subject.invoke("gen:stream", ["foo"], { dir: tmp_dir })
-      path = File.join(tmp_dir, "events/foo.tf")
-      expect(File.exist?(path)).to be true
-      expect(File.read(path)).to include(%(resource "jetstream_stream" "FOO"))
+      add_schema
+      expect do
+        subject.invoke("gen:consumer", ["foo_stream", "users.backend", "user.updated.v1"],
+          { dir: tmp_dir })
+      end.to raise_error(Polyn::Cli::Error)
     end
 
     it "it raises if the event has no schema" do
-      subject.invoke("gen:stream", ["foo"], { dir: tmp_dir })
-      path = File.join(tmp_dir, "events/foo.tf")
-      expect(File.exist?(path)).to be true
-      expect(File.read(path)).to include(%(resource "jetstream_stream" "FOO"))
+      subject.invoke("gen:stream", ["foo_stream"], { dir: tmp_dir })
+      expect do
+        subject.invoke("gen:consumer", ["foo_stream", "users.backend", "user.updated.v1"],
+          { dir: tmp_dir })
+      end.to raise_error(Polyn::Cli::Error)
     end
 
     it "raises if stream name is invalid" do
+      subject.invoke("gen:stream", ["foo_stream"], { dir: tmp_dir })
+      add_schema
       expect do
-        subject.invoke("gen:stream", ["foo bar baz"], { dir: tmp_dir })
+        subject.invoke("gen:consumer", ["foo stream", "users.backend", "user.updated.v1"],
+          { dir: tmp_dir })
       end.to raise_error(Polyn::Cli::Error)
+    end
+
+    it "raises if destination name is invalid" do
+      subject.invoke("gen:stream", ["foo_stream"], { dir: tmp_dir })
+      add_schema
+      expect do
+        subject.invoke("gen:consumer", ["foo_stream", "users backend", "user.updated.v1"],
+          { dir: tmp_dir })
+      end.to raise_error(Polyn::Cli::Error)
+    end
+
+    it "raises if event_type name is invalid" do
+      subject.invoke("gen:stream", ["foo_stream"], { dir: tmp_dir })
+      add_schema
+      expect do
+        subject.invoke("gen:consumer", ["foo_stream", "users.backend", "user updated v1"],
+          { dir: tmp_dir })
+      end.to raise_error(Polyn::Cli::Error)
+    end
+  end
+
+  def add_schema
+    File.open(File.join(tmp_dir, "events/user.updated.v1.json"), "w+") do |file|
+      file.write("boo!")
     end
   end
 end

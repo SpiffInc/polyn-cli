@@ -23,7 +23,22 @@ module Polyn
         Polyn::Cli::Naming.validate_event_type!(event_type)
       end
 
-      def format_names
+      def check_stream_existance
+        unless File.exist?(file_path)
+          raise Polyn::Cli::Error,
+            "You must first create a stream configuration with "\
+            "`polyn gen:stream #{format_stream_name}`"
+        end
+      end
+
+      def check_event_type_schema
+        unless File.exist?(File.join(options.dir, "events", "#{event_type}.json"))
+          raise Polyn::Cli::Error,
+            "You must first create a schema with `polyn gen:schema #{event_type}`"
+        end
+      end
+
+      def format_stream_name
         @stream_name = stream_name.upcase
       end
 
@@ -35,11 +50,11 @@ module Polyn
       end
 
       def file_name
-        @file_name ||= stream_name.downcase
+        @file_name ||= "tf/#{stream_name.downcase}.tf"
       end
 
       def file_path
-        File.join(options.dir, "tf", "#{file_name}.tf")
+        File.join(options.dir, file_name)
       end
 
       def create
