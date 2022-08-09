@@ -64,6 +64,7 @@ module Polyn
         say "Repository initialized"
       end
 
+      method_option :dir, default: Dir.getwd
       desc "tf_init", "Initializes Terraform for configuration"
       def tf_init
         say "Initializing Terraform"
@@ -74,10 +75,16 @@ module Polyn
 
       desc "up", "updates the JetStream streams and consumers, as well the Polyn event registry"
       def up
+        if polyn_env == "development"
+          say "Starting NATS"
+          run "docker compose up --detach"
+        end
+
         say "Updating JetStream configuration"
         inside "tf" do
           run tf_apply
         end
+
         say "Updating Polyn event registry"
         Polyn::Cli::SchemaLoader.new(self).load_events
       end
@@ -94,6 +101,10 @@ module Polyn
 
       def tf_apply
         if polyn_env == "development"
+          # turned off `refresh` which tries to match terraform sync with the configuration that
+          # is actually on the server. Turned it off because anytime a NATS server is killed
+          # locally all the streams, buckets, etc are lost and terraform won't be able to run
+          # because it can't find the values it expects in the NATS server
           %(terraform apply -var "jetstream_servers=#{nats_servers}" -auto-approve)
         else
           %(terraform apply -var "jetstream_servers=#{nats_servers}")
