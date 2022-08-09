@@ -101,10 +101,6 @@ module Polyn
 
       def tf_apply
         if polyn_env == "development"
-          # turned off `refresh` which tries to match terraform sync with the configuration that
-          # is actually on the server. Turned it off because anytime a NATS server is killed
-          # locally all the streams, buckets, etc are lost and terraform won't be able to run
-          # because it can't find the values it expects in the NATS server
           %(terraform apply -var "jetstream_servers=#{nats_servers}" -auto-approve)
         else
           %(terraform apply -var "jetstream_servers=#{nats_servers}")
