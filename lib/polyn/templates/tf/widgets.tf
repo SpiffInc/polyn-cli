@@ -2,20 +2,17 @@
 
 resource "jetstream_stream" "WIDGETS" {
   name = "WIDGETS"
-  subjects = ["app.widgets.*.*"]
+  subjects = ["widgets.>"]
   storage = "file"
   max_age  = 60 * 60 * 24 * 365 // 1 year
 }
 
-
 // CONSUMERS
 
-// app.widgets.created_notifier
-
-resource "jetstream_consumer" "app_widgets_created_notifier_app_widgets" {
-  stream_id = jetstream_stream.widgets.id
-  durable_name = "app_widgets_created_notifier_app_widgets"
+resource "jetstream_consumer" "created_notifier_widgets_created_v1" {
+  stream_id = jetstream_stream.WIDGETS.id
+  durable_name = "created_notifier_widgets_created_v1"
   deliver_all = true
-  filter_subject = "app.widgets.created.v1"
+  filter_subject = "widgets.created.v1"
   sample_freq = 100
 }

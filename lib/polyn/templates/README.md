@@ -17,7 +17,13 @@ environment.
 
 Each stream should have its own configuration file under `./tf` . Run `polyn gen:stream <stream_name>` to generate a new configuration file for a stream
 
+## Consumers
+
+Run `polyn gen:consumer <stream_name> <destination_name> <event_type>` to generate new configuration for a consumer of a stream. It will be included in the same file as the stream configuration.
+
 ## Event Schemas
+
+Run `polyn gen:schema <event_type>` to generate a new JSON Schema for an event
 
 All the schemas for your events should live in the `./events` directory.
 The name of your schema file should be the same as your event, but with `.json` at the end.
