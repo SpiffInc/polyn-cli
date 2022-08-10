@@ -64,6 +64,7 @@ module Polyn
         say "Repository initialized"
       end
 
+      method_option :dir, default: Dir.getwd
       desc "tf_init", "Initializes Terraform for configuration"
       def tf_init
         say "Initializing Terraform"
@@ -74,10 +75,16 @@ module Polyn
 
       desc "up", "updates the JetStream streams and consumers, as well the Polyn event registry"
       def up
+        if polyn_env == "development"
+          say "Starting NATS"
+          run "docker compose up --detach"
+        end
+
         say "Updating JetStream configuration"
         inside "tf" do
           run tf_apply
         end
+
         say "Updating Polyn event registry"
         Polyn::Cli::SchemaLoader.new(self).load_events
       end
