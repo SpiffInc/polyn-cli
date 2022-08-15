@@ -1,3 +1,5 @@
 tf/.terraform/**
 *.tfstate
-.terraform.lock.hcl
+*.backup
+# We don't ignore the terraform lockfile because it ensures that
+# the provider dependency versions are consistent
