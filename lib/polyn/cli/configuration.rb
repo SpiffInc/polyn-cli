@@ -8,8 +8,9 @@ module Polyn
       attr_reader :polyn_env, :nats_servers
 
       def initialize
-        @polyn_env    = ENV["POLYN_ENV"] || "development"
-        @nats_servers = ENV["NATS_SERVERS"] || "localhost:4222"
+        @polyn_env        = ENV["POLYN_ENV"] || "development"
+        @nats_servers     = ENV["NATS_SERVERS"] || "localhost:4222"
+        @nats_credentials = ENV["NATS_CREDENTIALS"]
       end
     end
   end

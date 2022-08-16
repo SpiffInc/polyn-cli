@@ -33,6 +33,7 @@ Run `polyn up` to update your NATS server with the latest configuration in your 
 ## Environment Variables
 
 * `NATS_SERVERS` - locations of your servers (defaults to localhost)
+* `NATS_CREDENTIALS` - path to nats credentials file
 * `POLYN_ENV` - type of environment (defaults to "development")
 
 ## Development
