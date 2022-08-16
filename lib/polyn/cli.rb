@@ -135,7 +135,7 @@ module Polyn
       end
 
       def add_remote_backend(tf_root)
-        copy_file File.join(tf_root, "prod/backend.tf"), "backend.tf"
+        copy_file File.join(tf_root, "remote_state_config/backend.tf"), "backend.tf"
         yield
         remove_file File.join(tf_root, "backend.tf")
       end
