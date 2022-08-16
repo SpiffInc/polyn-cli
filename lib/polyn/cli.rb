@@ -75,7 +75,9 @@ module Polyn
 
       desc "up", "updates the JetStream streams and consumers, as well the Polyn event registry"
       def up
-        if polyn_env == "development"
+        # We only want to run nats in the docker container if
+        # the developer isn't already running nats themselves locally
+        if polyn_env == "development" && !nats_running?
           say "Starting NATS"
           run "docker compose up --detach"
         end
@@ -105,6 +107,11 @@ module Polyn
         else
           %(terraform apply -var "jetstream_servers=#{nats_servers}")
         end
+      end
+
+      def nats_running?
+        # Uses lsof command to look up a process id. Will return `true` if it finds one
+        system("lsof -i TCP:4222 -t")
       end
 
       register(Polyn::Cli::SchemaGenerator, "gen:schema", "gen:schema EVENT_TYPE",
