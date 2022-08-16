@@ -12,6 +12,12 @@ variable "jetstream_servers" {
   description = "The JetStream servers to connect to"
 }
 
+variable "nats_credentials" {
+  type = string
+  description = "Path to file with NATS credentials"
+}
+
 provider "jetstream" {
   servers = var.jetstream_servers
+  credentials = var.nats_credentials
 }
