@@ -54,7 +54,9 @@ module Polyn
         directory "tf", File.join(options.dir, "tf")
         directory "events", File.join(options.dir, "events")
         template "docker-compose.yml", File.join(options.dir, "docker-compose.yml")
-        template "gitignore", File.join(options.dir, ".gitignore")
+        template "Dockerfile", File.join(options.dir, "Dockerfile")
+        template ".dockerignore", File.join(options.dir, ".dockerignore")
+        template ".gitignore", File.join(options.dir, ".gitignore")
         template "README.md", File.join(options.dir, "README.md")
         run tf_init
         say "Initializing git"
