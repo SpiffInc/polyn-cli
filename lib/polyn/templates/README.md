@@ -49,3 +49,17 @@ Making a change to an event schema that is not backwards-compatible will require
 json file. The new file should have the same name as your old file, but with the version number increased. Your
 Producers will need to continue producing both events until you are sure there are no more consumers using the
 old event.
+
+## Terraform State
+
+Terraform generates and maintains a [`terraform.tfstate`](https://www.terraform.io/language/state) file that is used to map terraform configuration to real production server instances. Polyn needs to interact with this file differently based on whether we are developing locally or in a production environment.
+
+### Local Development
+
+For local development Polyn expects the `terraform.tfstate` file to exist in the local file system. However, it should not be checked in to version control. We don't want experiments and updates made on a local developer machines to end up as the "source of truth" for our production infrastucture.
+
+### Production
+
+In production Terraform recommends keeping `terraform.tfstate` in a [remote storage location](https://www.terraform.io/language/state). The remote state file should be the "source of truth" for your infrastucture and shouldn't be getting accessed during development. Depending on the size of your organization and security policies, not all developers will have access to the remote storage source and you don't want that to prohibit them from adding events, streams, or consumers.
+
+Polyn expects you to keep a `./remote_state_config/backend.tf` file that configures a Terraform [backend](https://www.terraform.io/language/settings/backends/configuration). This will only be used when `POLYN_ENV=production`.
