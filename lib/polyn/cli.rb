@@ -67,14 +67,30 @@ module Polyn
       method_option :dir, default: Dir.getwd
       desc "tf_init", "Initializes Terraform for configuration"
       def tf_init
+        terraform_root = File.join(options.dir, "tf")
         say "Initializing Terraform"
-        inside File.join(options.dir, "tf") do
-          run "terraform init"
+        inside terraform_root do
+          # In a development environment we want developers to work with their own local
+          # .tfstate rather than one configured in a remote `backend` intended for
+          # production use.
+          # https://www.terraform.io/language/settings/backends/configuration
+          #
+          # Terraform assumes only one backend will be configured and there's no path
+          # to switch between local and remote. There's also no way to dynamically load
+          # modules. https://github.com/hashicorp/terraform/issues/1439
+          # Instead we'll copy a backend config to the terraform root if we're in a production
+          # environment
+          if polyn_env == "production"
+            add_remote_backend(terraform_root) { run "terraform init" }
+          else
+            run "terraform init"
+          end
         end
       end
 
       desc "up", "updates the JetStream streams and consumers, as well the Polyn event registry"
       def up
+        terraform_root = File.join(Dir.getwd, "tf")
         # We only want to run nats in the docker container if
         # the developer isn't already running nats themselves locally
         if polyn_env == "development" && !nats_running?
@@ -84,7 +100,11 @@ module Polyn
 
         say "Updating JetStream configuration"
         inside "tf" do
-          run tf_apply
+          if polyn_env == "production"
+            add_remote_backend(terraform_root) { run tf_apply }
+          else
+            run tf_apply
+          end
         end
 
         say "Updating Polyn event registry"
@@ -112,6 +132,12 @@ module Polyn
       def nats_running?
         # Uses lsof command to look up a process id. Will return `true` if it finds one
         system("lsof -i TCP:4222 -t")
+      end
+
+      def add_remote_backend(tf_root)
+        copy_file File.join(tf_root, "prod/backend.tf"), "backend.tf"
+        yield
+        remove_file File.join(tf_root, "backend.tf")
       end
 
       register(Polyn::Cli::SchemaGenerator, "gen:schema", "gen:schema EVENT_TYPE",
