@@ -10,7 +10,8 @@ environment.
    rather than using Homebrew to install Terraform.
 3. Ensure Docker & Docker Compose is installed
 4. [Install the Polyn CLI]()
-5. Call `polyn up`. By default this will run in `development` mode, which will start the NATS
+5. Call `polyn tf_init` if this is the first time using terraform in the codebase.
+6. Call `polyn up`. By default this will run in `development` mode, which will start the NATS
    server, configure it via Terraform, and update the Polyn Event Registry.
 
 ## Streams
