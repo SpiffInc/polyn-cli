@@ -89,6 +89,26 @@ RSpec.describe Polyn::Cli::SchemaLoader do
       expect { subject.load_events }.to_not raise_error
     end
 
+    it "it raises if two duplicate events exist" do
+      add_schema_file("app.widgets.v1", {
+        "type"       => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+        },
+      }, "foo-dir")
+
+      add_schema_file("app.widgets.v1", {
+        "type"       => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+        },
+      }, "bar-dir")
+
+      expect do
+        subject.load_events
+      end.to raise_error(Polyn::Cli::ValidationError)
+    end
+
     def add_schema_file(name, content, subdir = "")
       Dir.mkdir(File.join(tmp_dir, subdir)) unless subdir.empty?
       path = File.join(tmp_dir, subdir, "#{name}.json")
