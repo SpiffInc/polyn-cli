@@ -14,6 +14,14 @@ environment.
 6. Call `polyn up`. By default this will run in `development` mode, which will start the NATS
    server, configure it via Terraform, and update the Polyn Event Registry.
 
+### Running NATS locally
+
+`polyn up` will use run a Docker container for you if one is not already running. Alternatively, you can run `nats-server` yourself locally if you prefer.
+
+## Naming Conventions
+
+See the Protocol Documentation for [Naming Conventions](https://github.com/SpiffInc/polyn-protocol/blob/main/NAMING_CONVENTIONS.md)
+
 ## Streams
 
 Each stream should have its own configuration file under `./tf` . Run `polyn gen:stream <stream_name>` to generate a new configuration file for a stream
