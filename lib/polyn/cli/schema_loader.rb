@@ -41,7 +41,7 @@ module Polyn
       attr_reader :thor, :events, :client, :bucket, :cloud_event_schema, :events_dir
 
       def read_events
-        Dir.glob(File.join(events_dir, "*.json")).each do |event_file|
+        Dir.glob(File.join(events_dir, "/**/*.json")).each do |event_file|
           thor.say "Loading 'event #{event_file}'"
           data_schema = JSON.parse(File.read(event_file))
           event_type  = File.basename(event_file, ".json")
