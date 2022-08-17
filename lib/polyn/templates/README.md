@@ -45,6 +45,8 @@ This means you only need to include the JSON Schema for the `data` portion of th
 
 If you'd like to organize your events by team ownership or some other convention, you can use subdirectories to do so. The full event type should still be part of the file name. You should also ensure there are not duplicate event types in different directories as only one schema can be defined per event type.
 
+You can generate a schema in a subdirectory like this: `polyn gen:schema some/nested/dir/widgets.created.v1`
+
 ## Schema Versioning
 
 ### New Event
