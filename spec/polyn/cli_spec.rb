@@ -15,8 +15,10 @@ RSpec.describe Polyn::Cli do
     include_context :tmp_dir
     it "creates a new codebase" do
       subject.invoke(:init, [], { dir: tmp_dir })
-      expect(File.exist?(File.join(tmp_dir, "tf/event_registry.tf"))).to be true
-      expect(File.exist?(File.join(tmp_dir, "tf/main.tf"))).to be true
+      expect(File.exist?(File.join(tmp_dir, "tf/kv_buckets.tf"))).to be true
+      expect(File.exist?(File.join(tmp_dir, "tf/provider.tf"))).to be true
+      expect(File.exist?(File.join(tmp_dir, "tf/variables.tf"))).to be true
+      expect(File.exist?(File.join(tmp_dir, "tf/versions.tf"))).to be true
       expect(File.exist?(File.join(tmp_dir, "tf/widgets.tf"))).to be true
       expect(File.exist?(File.join(tmp_dir, "events/widgets.created.v1.json"))).to be true
       expect(File.exist?(File.join(tmp_dir, "README.md"))).to be true
