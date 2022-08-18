@@ -132,7 +132,10 @@ module Polyn
         if polyn_env == "development"
           %(terraform apply -var "jetstream_servers=#{nats_servers}")
         else
-          %(terraform apply -auto-approve -input=false -var "jetstream_servers=#{nats_servers}" -var "nats_credentials=#{nats_credentials}")
+          "terraform apply -auto-approve -input=false "\
+            "-var \"jetstream_servers=#{nats_servers}\" "\
+            "-var \"nats_credentials=#{nats_credentials}\" " \
+            "-var \"polyn_env=production\""
         end
       end
 
