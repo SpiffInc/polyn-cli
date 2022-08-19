@@ -54,8 +54,11 @@ module Polyn
         directory "tf", File.join(options.dir, "tf")
         directory "events", File.join(options.dir, "events")
         template "docker-compose.yml", File.join(options.dir, "docker-compose.yml")
-        template "gitignore", File.join(options.dir, ".gitignore")
+        template "Dockerfile", File.join(options.dir, "Dockerfile")
+        template ".dockerignore", File.join(options.dir, ".dockerignore")
+        template ".gitignore", File.join(options.dir, ".gitignore")
         template "README.md", File.join(options.dir, "README.md")
+        template "Gemfile", File.join(options.dir, "Gemfile")
         run tf_init
         say "Initializing git"
         inside options.dir do
@@ -67,22 +70,44 @@ module Polyn
       method_option :dir, default: Dir.getwd
       desc "tf_init", "Initializes Terraform for configuration"
       def tf_init
+        terraform_root = File.join(options.dir, "tf")
         say "Initializing Terraform"
-        inside File.join(options.dir, "tf") do
-          run "terraform init"
+        inside terraform_root do
+          # In a development environment we want developers to work with their own local
+          # .tfstate rather than one configured in a remote `backend` intended for
+          # production use.
+          # https://www.terraform.io/language/settings/backends/configuration
+          #
+          # Terraform assumes only one backend will be configured and there's no path
+          # to switch between local and remote. There's also no way to dynamically load
+          # modules. https://github.com/hashicorp/terraform/issues/1439
+          # Instead we'll copy a backend config to the terraform root if we're in a production
+          # environment
+          if polyn_env == "production"
+            add_remote_backend(terraform_root) { run "terraform init" }
+          else
+            run "terraform init"
+          end
         end
       end
 
       desc "up", "updates the JetStream streams and consumers, as well the Polyn event registry"
       def up
-        if polyn_env == "development"
+        terraform_root = File.join(Dir.getwd, "tf")
+        # We only want to run nats in the docker container if
+        # the developer isn't already running nats themselves locally
+        if polyn_env == "development" && !nats_running?
           say "Starting NATS"
           run "docker compose up --detach"
         end
 
         say "Updating JetStream configuration"
         inside "tf" do
-          run tf_apply
+          if polyn_env == "production"
+            add_remote_backend(terraform_root) { run tf_apply }
+          else
+            run tf_apply
+          end
         end
 
         say "Updating Polyn event registry"
@@ -99,12 +124,30 @@ module Polyn
         Polyn::Cli.configuration.nats_servers
       end
 
+      def nats_credentials
+        Polyn::Cli.configuration.nats_credentials
+      end
+
       def tf_apply
         if polyn_env == "development"
-          %(terraform apply -var "jetstream_servers=#{nats_servers}" -auto-approve)
-        else
           %(terraform apply -var "jetstream_servers=#{nats_servers}")
+        else
+          %(terraform apply -auto-approve -input=false -var "jetstream_servers=#{nats_servers}" -var "nats_credentials=#{nats_credentials}")
         end
+      end
+
+      def nats_running?
+        # Uses lsof command to look up a process id. Will return `true` if it finds one
+        system("lsof -i TCP:4222 -t")
+      end
+
+      def add_remote_backend(tf_root)
+        copy_file File.join(tf_root, "remote_state_config/backend.tf"), "backend.tf"
+        yield
+      # We always want to remove the backend.tf file even if there's an error
+      # this way you don't get into a weird state when testing locally
+      ensure
+        remove_file File.join(tf_root, "backend.tf")
       end
 
       register(Polyn::Cli::SchemaGenerator, "gen:schema", "gen:schema EVENT_TYPE",
