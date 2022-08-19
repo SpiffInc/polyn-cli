@@ -58,6 +58,7 @@ module Polyn
         template ".dockerignore", File.join(options.dir, ".dockerignore")
         template ".gitignore", File.join(options.dir, ".gitignore")
         template "README.md", File.join(options.dir, "README.md")
+        template "Gemfile", File.join(options.dir, "Gemfile")
         run tf_init
         say "Initializing git"
         inside options.dir do
