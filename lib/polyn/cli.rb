@@ -130,9 +130,9 @@ module Polyn
 
       def tf_apply
         if polyn_env == "development"
-          %(terraform apply -var "jetstream_servers=#{nats_servers}" -auto-approve)
+          %(terraform apply -var "jetstream_servers=#{nats_servers}")
         else
-          %(terraform apply -var "jetstream_servers=#{nats_servers}" -var "nats_credentials=#{nats_credentials}")
+          %(terraform apply -auto-approve -input=false -var "jetstream_servers=#{nats_servers}" -var "nats_credentials=#{nats_credentials}")
         end
       end
 
@@ -144,6 +144,9 @@ module Polyn
       def add_remote_backend(tf_root)
         copy_file File.join(tf_root, "remote_state_config/backend.tf"), "backend.tf"
         yield
+      # We always want to remove the backend.tf file even if there's an error
+      # this way you don't get into a weird state when testing locally
+      ensure
         remove_file File.join(tf_root, "backend.tf")
       end
 
