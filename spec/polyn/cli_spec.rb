@@ -23,6 +23,7 @@ RSpec.describe Polyn::Cli do
       expect(File.exist?(File.join(tmp_dir, "events/widgets.created.v1.json"))).to be true
       expect(File.exist?(File.join(tmp_dir, "README.md"))).to be true
       expect(File.exist?(File.join(tmp_dir, "Gemfile"))).to be true
+      expect(File.read(File.join(tmp_dir, "Gemfile"))).to include(Polyn::Cli::VERSION)
       expect(File.exist?(File.join(tmp_dir, ".gitignore"))).to be true
       expect(File.exist?(File.join(tmp_dir, "docker-compose.yml"))).to be true
     end
