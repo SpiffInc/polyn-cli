@@ -46,6 +46,26 @@ RSpec.describe Polyn::Cli::SchemaLoader do
       })
     end
 
+    it "it loads events to the store from subdirectories" do
+      add_schema_file("app.widgets.v1", {
+        "type"       => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+        },
+      }, "foo-dir")
+
+      subject.load_events
+
+      schema  = get_schema("app.widgets.v1")
+      datadef = schema["definitions"]["datadef"]
+      expect(datadef).to eq({
+        "type"       => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+        },
+      })
+    end
+
     it "invalid json schema document raises" do
       add_schema_file("app.widgets.v1", "foo")
 
@@ -69,8 +89,29 @@ RSpec.describe Polyn::Cli::SchemaLoader do
       expect { subject.load_events }.to_not raise_error
     end
 
-    def add_schema_file(name, content)
-      path = File.join(tmp_dir, "#{name}.json")
+    it "it raises if two duplicate events exist" do
+      add_schema_file("app.widgets.v1", {
+        "type"       => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+        },
+      }, "foo-dir")
+
+      add_schema_file("app.widgets.v1", {
+        "type"       => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+        },
+      }, "bar-dir")
+
+      expect do
+        subject.load_events
+      end.to raise_error(Polyn::Cli::ValidationError)
+    end
+
+    def add_schema_file(name, content, subdir = "")
+      Dir.mkdir(File.join(tmp_dir, subdir)) unless subdir.empty?
+      path = File.join(tmp_dir, subdir, "#{name}.json")
       File.write(path, JSON.generate(content))
     end
 

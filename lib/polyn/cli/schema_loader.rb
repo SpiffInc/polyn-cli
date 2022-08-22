@@ -41,7 +41,10 @@ module Polyn
       attr_reader :thor, :events, :client, :bucket, :cloud_event_schema, :events_dir
 
       def read_events
-        Dir.glob(File.join(events_dir, "*.json")).each do |event_file|
+        event_files = Dir.glob(File.join(events_dir, "/**/*.json"))
+        validate_unique_event_types!(event_files)
+
+        event_files.each do |event_file|
           thor.say "Loading 'event #{event_file}'"
           data_schema = JSON.parse(File.read(event_file))
           event_type  = File.basename(event_file, ".json")
@@ -50,6 +53,30 @@ module Polyn
           schema      = compose_cloud_event(data_schema)
 
           events[event_type] = schema
+        end
+      end
+
+      def validate_unique_event_types!(event_files)
+        duplicates = find_duplicates(event_files)
+        unless duplicates.empty?
+          messages = duplicates.reduce([]) do |memo, (event_type, files)|
+            memo << [event_type, *files].join("\n")
+          end
+          message  = [
+            "There can only be one of each event type. The following events were duplicated:",
+            *messages,
+          ].join("\n")
+          raise Polyn::Cli::ValidationError, message
+        end
+      end
+
+      def find_duplicates(event_files)
+        event_types = event_files.group_by do |event_file|
+          File.basename(event_file, ".json")
+        end
+        event_types.each_with_object({}) do |(event_type, files), hash|
+          hash[event_type] = files if files.length > 1
+          hash
         end
       end
 

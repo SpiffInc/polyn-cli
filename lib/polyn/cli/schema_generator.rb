@@ -14,21 +14,32 @@ module Polyn
 
       source_root File.join(File.expand_path(__dir__), "../templates")
 
+      def type
+        @type ||= event_type.split("/").last
+      end
+
+      def subdir
+        @subdir ||= begin
+          split = event_type.split("/") - [type]
+          split.join("/")
+        end
+      end
+
       def check_name
-        Polyn::Cli::Naming.validate_event_type!(event_type)
+        Polyn::Cli::Naming.validate_event_type!(type)
       end
 
       def file_name
-        @file_name ||= "#{event_type}.json"
+        @file_name ||= File.join(subdir, "#{type}.json")
       end
 
       def schema_id
-        Polyn::Cli::Naming.dot_to_colon(event_type)
+        Polyn::Cli::Naming.dot_to_colon(type)
       end
 
       def create
-        say "Creating new schema for #{event_type}"
-        template "generators/schema.json", File.join(options.dir, "events/#{event_type}.json")
+        say "Creating new schema for #{file_name}"
+        template "generators/schema.json", File.join(options.dir, "events/#{file_name}")
       end
     end
   end

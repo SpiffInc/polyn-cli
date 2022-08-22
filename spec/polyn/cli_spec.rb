@@ -120,6 +120,14 @@ RSpec.describe Polyn::Cli do
       expect(file).to include(%("$id": "foo"))
     end
 
+    it "it creates a new schema file in a subdirectory" do
+      subject.invoke("gen:schema", ["some/deep/dir/foo"], { dir: tmp_dir })
+      path = File.join(tmp_dir, "events/some/deep/dir/foo.json")
+      expect(File.exist?(path)).to be true
+      file = File.read(path)
+      expect(file).to include(%("$id": "foo"))
+    end
+
     it "raises if event_type is invalid" do
       expect do
         subject.invoke("gen:schema", ["foo bar baz"], { dir: tmp_dir })
