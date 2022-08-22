@@ -11,10 +11,6 @@ ADD tf ./tf
 
 FROM app as dev
 ENV POLYN_ENV='development'
-RUN bundle exec polyn tf_init
-CMD bundle exec polyn up
 
 FROM app as prod
 ENV POLYN_ENV='production'
-RUN bundle exec polyn tf_init
-CMD bundle exec polyn up
