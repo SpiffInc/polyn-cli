@@ -10,6 +10,7 @@ RSpec.describe Polyn::Cli::SchemaLoader do
     let(:thor) { double("thor") }
     let(:nats) { NATS.connect }
     let(:js) { nats.jetstream }
+    let(:kv) { js.key_value(store_name) }
 
     before(:each) do
       allow(thor).to receive(:say)
@@ -109,6 +110,19 @@ RSpec.describe Polyn::Cli::SchemaLoader do
       end.to raise_error(Polyn::Cli::ValidationError)
     end
 
+    it "it removes deleted events" do
+      kv.put("app.widgets.v1", JSON.generate({
+        "type"       => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+        },
+      }))
+
+      subject.load_events
+
+      expect { kv.get("app.widgets.v1") }.to raise_error(NATS::KeyValue::KeyDeletedError)
+    end
+
     def add_schema_file(name, content, subdir = "")
       Dir.mkdir(File.join(tmp_dir, subdir)) unless subdir.empty?
       path = File.join(tmp_dir, subdir, "#{name}.json")
@@ -116,7 +130,6 @@ RSpec.describe Polyn::Cli::SchemaLoader do
     end
 
     def get_schema(name)
-      kv    = js.key_value(store_name)
       entry = kv.get(name)
       JSON.parse(entry.value)
     end
