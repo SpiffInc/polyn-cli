@@ -130,7 +130,7 @@ module Polyn
 
       def tf_apply
         if polyn_env == "development"
-          %(terraform apply -var "jetstream_servers=#{nats_servers}")
+          %(terraform apply -auto-approve -input=false -var "jetstream_servers=#{nats_servers}")
         else
           "terraform apply -auto-approve -input=false "\
             "-var \"jetstream_servers=#{nats_servers}\" "\
