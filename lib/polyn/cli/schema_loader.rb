@@ -113,7 +113,7 @@ module Polyn
 
         loop do
           msg                                                     = sub.next_msg
-          existing_events[msg.subject.gsub("#{key_prefix}.", "")] = msg.data
+          existing_events[msg.subject.gsub("#{key_prefix}.", "")] = msg.data unless msg.data.empty?
         # A timeout is the only mechanism given to indicate there are no
         # more messages
         rescue NATS::IO::Timeout
