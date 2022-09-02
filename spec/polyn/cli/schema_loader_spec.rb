@@ -123,6 +123,21 @@ RSpec.describe Polyn::Cli::SchemaLoader do
       expect { kv.get("app.widgets.v1") }.to raise_error(NATS::KeyValue::KeyDeletedError)
     end
 
+    it "ignores history of deleted events" do
+      kv.put("app.widgets.v1", JSON.generate({
+        "type"       => "object",
+        "properties" => {
+          "name" => { "type" => "string" },
+        },
+      }))
+
+      kv.delete("app.widgets.v1")
+
+      subject.load_events
+
+      expect { kv.get("app.widgets.v1") }.to raise_error(NATS::KeyValue::KeyDeletedError)
+    end
+
     def add_schema_file(name, content, subdir = "")
       Dir.mkdir(File.join(tmp_dir, subdir)) unless subdir.empty?
       path = File.join(tmp_dir, subdir, "#{name}.json")
