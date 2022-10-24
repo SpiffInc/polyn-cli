@@ -11,6 +11,7 @@ module Polyn
         @polyn_env        = ENV["POLYN_ENV"] || "development"
         @nats_servers     = ENV["NATS_SERVERS"] || "localhost:4222"
         @nats_credentials = ENV["NATS_CREDENTIALS"] || ""
+        @nats_ca_file     = ENV["NATS_CA_FILE"] || ""
       end
     end
   end
