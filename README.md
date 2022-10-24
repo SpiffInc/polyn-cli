@@ -34,6 +34,7 @@ Run `polyn up` to update your NATS server with the latest configuration in your 
 
 * `NATS_SERVERS` - locations of your servers (defaults to localhost)
 * `NATS_CREDENTIALS` - path to nats credentials file
+* `NATS_CA_FILE` - Fully Qualified Path to a file containing Root CA (PEM format). Use when the server has certs signed by an unknown authority.
 * `POLYN_ENV` - type of environment (defaults to "development")
 
 ## Development

@@ -128,6 +128,10 @@ module Polyn
         Polyn::Cli.configuration.nats_credentials
       end
 
+      def nats_ca_file
+        Polyn::Cli.configuration.nats_ca_file
+      end
+
       def tf_apply
         if polyn_env == "development"
           %(terraform apply -auto-approve -input=false -var "jetstream_servers=#{nats_servers}")
@@ -135,6 +139,7 @@ module Polyn
           "terraform apply -auto-approve -input=false "\
             "-var \"jetstream_servers=#{nats_servers}\" "\
             "-var \"nats_credentials=#{nats_credentials}\" " \
+            "-var \"nats_ca_file=#{nats_ca_file}\" " \
             "-var \"polyn_env=production\""
         end
       end
